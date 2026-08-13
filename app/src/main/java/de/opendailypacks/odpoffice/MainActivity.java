@@ -2,20 +2,20 @@ package de.opendailypacks.odpoffice;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.content.SharedPreferences;
 import android.text.InputType;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
 
-    private SharedPreferences prefs;
+    private OfficeDb db;
     private TextView dashboard;
     private TextView status;
 
@@ -24,173 +24,206 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        prefs = getSharedPreferences("odp_office", MODE_PRIVATE);
+        db = new OfficeDb(this);
+
         dashboard = findViewById(R.id.dashboardText);
         status = findViewById(R.id.statusText);
 
         findViewById(R.id.addOrderButton).setOnClickListener(v -> addOrder());
-        findViewById(R.id.addStockButton).setOnClickListener(v -> addStock());
+        findViewById(R.id.addStockButton).setOnClickListener(v -> addProduct());
 
         findViewById(R.id.ordersButton).setOnClickListener(v -> showOrders());
-        findViewById(R.id.inventoryButton).setOnClickListener(v -> showInventory());
-        findViewById(R.id.shippingButton).setOnClickListener(v -> showShipping());
-        findViewById(R.id.financeButton).setOnClickListener(v -> showFinance());
+        findViewById(R.id.inventoryButton).setOnClickListener(v -> showProducts());
+
+        findViewById(R.id.shippingButton).setOnClickListener(v ->
+            status.setText(
+                "VERSAND & LABELS\n\n" +
+                db.openOrders() + " offene Sendungen.\n\n" +
+                "Nächster Schritt:\n" +
+                "eBay-Bestellungen abrufen → DHL Label → Tracking automatisch zurück zu eBay."
+            )
+        );
+
+        findViewById(R.id.financeButton).setOnClickListener(v ->
+            status.setText(
+                "FINANZEN\n\n" +
+                "Umsatz: " + money(db.revenue()) +
+                "\nLagerwert EK: " + money(db.stockValue()) +
+                "\n\nFinom / Lexware folgen."
+            )
+        );
+
         findViewById(R.id.integrationsButton).setOnClickListener(v ->
-                status.setText("Schnittstellen: eBay · Billbee · Finom · Lexware\nLive-Anbindungen folgen als nächster Schritt.")
+            status.setText(
+                "SCHNITTSTELLEN\n\n" +
+                "eBay\nBillbee\nFinom\nLexware\nDHL\n\n" +
+                "API-Anbindungen werden als nächste Stufe eingebaut."
+            )
         );
 
         refreshDashboard();
     }
 
-    private void addOrder() {
+    private EditText field(String hint) {
+        EditText e = new EditText(this);
+        e.setHint(hint);
+        return e;
+    }
+
+    private EditText numberField(String hint) {
+        EditText e = field(hint);
+        e.setInputType(
+            InputType.TYPE_CLASS_NUMBER |
+            InputType.TYPE_NUMBER_FLAG_DECIMAL
+        );
+        return e;
+    }
+
+    private LinearLayout form() {
         LinearLayout box = new LinearLayout(this);
         box.setOrientation(LinearLayout.VERTICAL);
-        int pad = 32;
-        box.setPadding(pad, pad, pad, pad);
+        box.setPadding(40, 20, 40, 10);
+        return box;
+    }
 
-        EditText customer = new EditText(this);
-        customer.setHint("Kunde / Bestellnummer");
+    private void addProduct() {
+        LinearLayout box = form();
 
-        EditText amount = new EditText(this);
-        amount.setHint("Betrag in €");
-        amount.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        EditText name = field("Produktname");
+        EditText sku = field("SKU / Artikelnummer");
+        EditText qty = numberField("Menge");
+        EditText ek = numberField("EK pro Stück €");
+        EditText vk = numberField("VK pro Stück €");
 
+        box.addView(name);
+        box.addView(sku);
+        box.addView(qty);
+        box.addView(ek);
+        box.addView(vk);
+
+        new AlertDialog.Builder(this)
+            .setTitle("Produkt hinzufügen")
+            .setView(box)
+            .setPositiveButton("Speichern", (d, w) -> {
+                if (name.getText().toString().trim().isEmpty()) {
+                    status.setText("Produktname fehlt.");
+                    return;
+                }
+
+                db.addProduct(
+                    name.getText().toString().trim(),
+                    sku.getText().toString().trim(),
+                    intval(qty.getText().toString()),
+                    dbl(ek.getText().toString()),
+                    dbl(vk.getText().toString())
+                );
+
+                status.setText("Produkt gespeichert: " + name.getText());
+                refreshDashboard();
+            })
+            .setNegativeButton("Abbrechen", null)
+            .show();
+    }
+
+    private void addOrder() {
+        LinearLayout box = form();
+
+        EditText channel = field("Kanal, z.B. eBay");
+        EditText customer = field("Kunde / Bestellnummer");
+        EditText product = field("Produkt");
+        EditText qty = numberField("Menge");
+        EditText amount = numberField("Gesamtbetrag €");
+
+        box.addView(channel);
         box.addView(customer);
+        box.addView(product);
+        box.addView(qty);
         box.addView(amount);
 
         new AlertDialog.Builder(this)
-                .setTitle("Bestellung hinzufügen")
-                .setView(box)
-                .setPositiveButton("Speichern", (d, w) -> {
-                    double value = parseAmount(amount.getText().toString());
-                    int orders = prefs.getInt("orders", 0) + 1;
-                    double revenue = Double.longBitsToDouble(
-                            prefs.getLong("revenue", Double.doubleToLongBits(0))
-                    ) + value;
+            .setTitle("Bestellung hinzufügen")
+            .setView(box)
+            .setPositiveButton("Speichern", (d, w) -> {
+                db.addOrder(
+                    channel.getText().toString().trim(),
+                    customer.getText().toString().trim(),
+                    product.getText().toString().trim(),
+                    Math.max(1, intval(qty.getText().toString())),
+                    dbl(amount.getText().toString())
+                );
 
-                    prefs.edit()
-                            .putInt("orders", orders)
-                            .putLong("revenue", Double.doubleToLongBits(revenue))
-                            .putString("lastOrder", customer.getText().toString())
-                            .apply();
-
-                    status.setText("Bestellung gespeichert: " + customer.getText());
-                    refreshDashboard();
-                })
-                .setNegativeButton("Abbrechen", null)
-                .show();
+                status.setText("Bestellung gespeichert.");
+                refreshDashboard();
+            })
+            .setNegativeButton("Abbrechen", null)
+            .show();
     }
 
-    private void addStock() {
-        LinearLayout box = new LinearLayout(this);
-        box.setOrientation(LinearLayout.VERTICAL);
-        int pad = 32;
-        box.setPadding(pad, pad, pad, pad);
+    private void showProducts() {
+        Cursor c = db.products();
+        ArrayList<String> rows = new ArrayList<>();
 
-        EditText product = new EditText(this);
-        product.setHint("Produkt");
+        while (c.moveToNext()) {
+            String sku = c.getString(2);
 
-        EditText qty = new EditText(this);
-        qty.setHint("Menge");
-        qty.setInputType(InputType.TYPE_CLASS_NUMBER);
+            rows.add(
+                c.getString(1) +
+                "\nSKU: " + (sku == null || sku.isEmpty() ? "—" : sku) +
+                "\nBestand: " + c.getInt(3) +
+                " · EK " + money(c.getDouble(4)) +
+                " · VK " + money(c.getDouble(5))
+            );
+        }
+        c.close();
 
-        EditText ek = new EditText(this);
-        ek.setHint("EK pro Stück in €");
-        ek.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-
-        box.addView(product);
-        box.addView(qty);
-        box.addView(ek);
+        if (rows.isEmpty()) rows.add("Noch keine Produkte vorhanden.");
 
         new AlertDialog.Builder(this)
-                .setTitle("Bestand hinzufügen")
-                .setView(box)
-                .setPositiveButton("Speichern", (d, w) -> {
-                    int quantity = parseInt(qty.getText().toString());
-                    double purchase = parseAmount(ek.getText().toString());
-
-                    int stock = prefs.getInt("stock", 0) + quantity;
-                    double stockValue = Double.longBitsToDouble(
-                            prefs.getLong("stockValue", Double.doubleToLongBits(0))
-                    ) + (quantity * purchase);
-
-                    prefs.edit()
-                            .putInt("stock", stock)
-                            .putLong("stockValue", Double.doubleToLongBits(stockValue))
-                            .putString("lastProduct", product.getText().toString())
-                            .apply();
-
-                    status.setText("Bestand gespeichert: " + quantity + " × " + product.getText());
-                    refreshDashboard();
-                })
-                .setNegativeButton("Abbrechen", null)
-                .show();
-    }
-
-    private void refreshDashboard() {
-        int orders = prefs.getInt("orders", 0);
-        int stock = prefs.getInt("stock", 0);
-        double revenue = Double.longBitsToDouble(
-                prefs.getLong("revenue", Double.doubleToLongBits(0))
-        );
-
-        dashboard.setText(
-                "HEUTE\n\n" +
-                orders + " offene Bestellungen\n" +
-                orders + " versandbereit\n" +
-                money(revenue) + " Umsatz\n\n" +
-                stock + " Artikel im Bestand"
-        );
+            .setTitle("Bestand")
+            .setItems(rows.toArray(new String[0]), null)
+            .setPositiveButton("Schließen", null)
+            .show();
     }
 
     private void showOrders() {
-        int orders = prefs.getInt("orders", 0);
-        String last = prefs.getString("lastOrder", "Noch keine Bestellung");
-        status.setText(
-                "BESTELLUNGEN\n\nOffen: " + orders +
-                "\nLetzte Bestellung: " + last
-        );
+        Cursor c = db.orders();
+        ArrayList<String> rows = new ArrayList<>();
+
+        while (c.moveToNext()) {
+            rows.add(
+                "#" + c.getInt(0) +
+                " · " + safe(c.getString(1)) +
+                "\n" + safe(c.getString(2)) +
+                "\n" + safe(c.getString(3)) +
+                " × " + c.getInt(4) +
+                "\n" + money(c.getDouble(5)) +
+                " · " + c.getString(6)
+            );
+        }
+        c.close();
+
+        if (rows.isEmpty()) rows.add("Noch keine Bestellungen vorhanden.");
+
+        new AlertDialog.Builder(this)
+            .setTitle("Bestellungen")
+            .setItems(rows.toArray(new String[0]), null)
+            .setPositiveButton("Schließen", null)
+            .show();
     }
 
-    private void showInventory() {
-        int stock = prefs.getInt("stock", 0);
-        double value = Double.longBitsToDouble(
-                prefs.getLong("stockValue", Double.doubleToLongBits(0))
+    private void refreshDashboard() {
+        dashboard.setText(
+            "ODP BUSINESS HEUTE\n\n" +
+            db.openOrders() + " offene Bestellungen\n" +
+            db.stockQty() + " Artikel im Bestand\n\n" +
+            money(db.revenue()) + " Umsatz\n" +
+            money(db.stockValue()) + " Lagerwert EK"
         );
-        String last = prefs.getString("lastProduct", "Noch kein Produkt");
 
-        status.setText(
-                "BESTAND\n\nArtikel: " + stock +
-                "\nLagerwert EK: " + money(value) +
-                "\nLetztes Produkt: " + last
-        );
+        status.setText("System bereit · ODP Office v0.3");
     }
 
-    private void showShipping() {
-        int orders = prefs.getInt("orders", 0);
-        status.setText(
-                "VERSAND & LABELS\n\n" +
-                orders + " Sendungen warten auf Bearbeitung.\n\n" +
-                "Nächste Ausbaustufe:\nLabel erstellen → Trackingnummer automatisch zu eBay."
-        );
-    }
-
-    private void showFinance() {
-        double revenue = Double.longBitsToDouble(
-                prefs.getLong("revenue", Double.doubleToLongBits(0))
-        );
-        double stockValue = Double.longBitsToDouble(
-                prefs.getLong("stockValue", Double.doubleToLongBits(0))
-        );
-
-        status.setText(
-                "FINANZEN\n\nUmsatz: " + money(revenue) +
-                "\nWareneinkaufswert: " + money(stockValue) +
-                "\n\nFinom & Lexware Integration folgt."
-        );
-    }
-
-    private double parseAmount(String s) {
+    private double dbl(String s) {
         try {
             return Double.parseDouble(s.replace(",", "."));
         } catch (Exception e) {
@@ -198,7 +231,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private int parseInt(String s) {
+    private int intval(String s) {
         try {
             return Integer.parseInt(s);
         } catch (Exception e) {
@@ -207,6 +240,12 @@ public class MainActivity extends Activity {
     }
 
     private String money(double value) {
-        return NumberFormat.getCurrencyInstance(Locale.GERMANY).format(value);
+        return NumberFormat
+            .getCurrencyInstance(Locale.GERMANY)
+            .format(value);
+    }
+
+    private String safe(String s) {
+        return s == null || s.trim().isEmpty() ? "—" : s;
     }
 }
