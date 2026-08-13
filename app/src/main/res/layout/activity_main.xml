@@ -2,121 +2,261 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#090B0E"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@color/odp_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ODP OFFICE"
-            android:textColor="#FFFFFF"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:text="OpenDailyPacks · Business Control Center"
-            android:textColor="#9FA7B1"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/dashboardText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
-            android:background="#171B21"
-            android:padding="20dp"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        android:paddingLeft="18dp"
+        android:paddingTop="22dp"
+        android:paddingRight="18dp"
+        android:paddingBottom="28dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ODP"
+                    android:textColor="@color/odp_text"
+                    android:textSize="33sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OFFICE"
+                    android:textColor="@color/odp_muted"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.28"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_bg"
+                android:paddingLeft="12dp"
+                android:paddingTop="8dp"
+                android:paddingRight="12dp"
+                android:paddingBottom="8dp"
+                android:text="LIVE"
+                android:textColor="@color/odp_green"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:text="OpenDailyPacks Business Control Center"
+            android:textColor="@color/odp_muted"
+            android:textSize="14sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/card_bg_highlight"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ÜBERSICHT"
+                android:textColor="@color/odp_muted"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.18"/>
+
+            <TextView
+                android:id="@+id/dashboardText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="@color/odp_text"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:lineSpacingExtra="5dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:text="SCHNELLZUGRIFF"
+            android:textColor="@color/odp_muted"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.15"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/addOrderButton"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="58dp"
                 android:layout_weight="1"
+                android:background="@drawable/action_bg"
                 android:text="+ Bestellung"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:textColor="#090B0D"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+            <Space
+                android:layout_width="10dp"
+                android:layout_height="1dp"/>
 
             <Button
                 android:id="@+id/addStockButton"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="58dp"
                 android:layout_weight="1"
+                android:background="@drawable/action_bg"
                 android:text="+ Bestand"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:textColor="#090B0D"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
         </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="BEREICHE"
+            android:textColor="@color/odp_muted"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.15"/>
 
         <Button
             android:id="@+id/ordersButton"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="18dp"
-            android:text="Bestellungen"
+            android:layout_height="62dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/nav_bg"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="18dp"
+            android:text="Bestellungen   ›"
             android:textAllCaps="false"
-            android:textSize="16sp" />
+            android:textColor="@color/odp_text"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/inventoryButton"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="8dp"
-            android:text="Bestand"
+            android:layout_height="62dp"
+            android:layout_marginTop="9dp"
+            android:background="@drawable/nav_bg"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="18dp"
+            android:text="Bestand   ›"
             android:textAllCaps="false"
-            android:textSize="16sp" />
+            android:textColor="@color/odp_text"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/shippingButton"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="8dp"
-            android:text="Versand &amp; Labels"
+            android:layout_height="62dp"
+            android:layout_marginTop="9dp"
+            android:background="@drawable/nav_bg"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="18dp"
+            android:text="Versand &amp; Labels   ›"
             android:textAllCaps="false"
-            android:textSize="16sp" />
+            android:textColor="@color/odp_text"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/financeButton"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="8dp"
-            android:text="Finanzen"
+            android:layout_height="62dp"
+            android:layout_marginTop="9dp"
+            android:background="@drawable/nav_bg"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="18dp"
+            android:text="Finanzen   ›"
             android:textAllCaps="false"
-            android:textSize="16sp" />
+            android:textColor="@color/odp_text"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/integrationsButton"
             android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginTop="8dp"
-            android:text="Schnittstellen"
+            android:layout_height="62dp"
+            android:layout_marginTop="9dp"
+            android:background="@drawable/nav_bg"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="18dp"
+            android:text="Schnittstellen   ›"
             android:textAllCaps="false"
-            android:textSize="16sp" />
+            android:textColor="@color/odp_text"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/card_bg"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SYSTEMSTATUS"
+                android:textColor="@color/odp_muted"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.16"/>
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="System bereit"
+                android:textColor="@color/odp_silver"
+                android:textSize="14sp"
+                android:lineSpacingExtra="4dp"/>
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/statusText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="#121519"
-            android:padding="18dp"
-            android:text="System bereit · ODP Office v0.2"
-            android:textColor="#CBD1D8"
-            android:textSize="15sp" />
+            android:gravity="center"
+            android:text="ODP OFFICE · v0.4"
+            android:textColor="#59616B"
+            android:textSize="11sp"
+            android:letterSpacing="0.12"/>
 
     </LinearLayout>
 </ScrollView>

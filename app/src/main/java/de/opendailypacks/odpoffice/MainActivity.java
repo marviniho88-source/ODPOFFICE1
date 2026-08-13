@@ -213,14 +213,17 @@ public class MainActivity extends Activity {
 
     private void refreshDashboard() {
         dashboard.setText(
-            "ODP BUSINESS HEUTE\n\n" +
-            db.openOrders() + " offene Bestellungen\n" +
-            db.stockQty() + " Artikel im Bestand\n\n" +
-            money(db.revenue()) + " Umsatz\n" +
+            money(db.revenue()) + " Umsatz\n\n" +
+            db.openOrders() + " offene Bestellungen  ·  " +
+            db.stockQty() + " Artikel\n" +
             money(db.stockValue()) + " Lagerwert EK"
         );
 
-        status.setText("System bereit · ODP Office v0.3");
+        status.setText(
+            "● System online\n" +
+            "Lokale Datenbank aktiv\n" +
+            "Billbee · eBay · Finom · Lexware werden vorbereitet"
+        );
     }
 
     private double dbl(String s) {

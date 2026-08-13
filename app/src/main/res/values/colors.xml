@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="odp_bg">#080A0D</color>
+    <color name="odp_surface">#12161B</color>
+    <color name="odp_surface_2">#181D23</color>
+    <color name="odp_border">#303741</color>
+    <color name="odp_text">#F4F6F8</color>
+    <color name="odp_muted">#98A2AE</color>
+    <color name="odp_silver">#D7DCE2</color>
+    <color name="odp_green">#60D394</color>
+</resources>
