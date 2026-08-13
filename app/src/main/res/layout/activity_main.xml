@@ -2,14 +2,14 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0B0D10"
+    android:background="#090B0E"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="22dp">
+        android:padding="20dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -22,75 +22,101 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="OpenDailyPacks · Zentrale"
-            android:textColor="#A8AFB8"
-            android:textSize="15sp" />
+            android:layout_marginTop="3dp"
+            android:text="OpenDailyPacks · Business Control Center"
+            android:textColor="#9FA7B1"
+            android:textSize="14sp" />
 
         <TextView
+            android:id="@+id/dashboardText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
+            android:layout_marginTop="22dp"
             android:background="#171B21"
-            android:padding="18dp"
-            android:text="HEUTE\n0 offene Bestellungen   ·   0 Versandbereit\n0,00 € Umsatz"
+            android:padding="20dp"
             android:textColor="#FFFFFF"
-            android:textSize="17sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/addOrderButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="+ Bestellung"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/addStockButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="+ Bestand"
+                android:textAllCaps="false" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/ordersButton"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:layout_marginTop="20dp"
-            android:text="BESTELLUNGEN"
+            android:layout_marginTop="18dp"
+            android:text="Bestellungen"
             android:textAllCaps="false"
-            android:textSize="17sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/inventoryButton"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:layout_marginTop="10dp"
-            android:text="BESTAND"
+            android:layout_marginTop="8dp"
+            android:text="Bestand"
             android:textAllCaps="false"
-            android:textSize="17sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/shippingButton"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:layout_marginTop="10dp"
-            android:text="VERSAND &amp; LABELS"
+            android:layout_marginTop="8dp"
+            android:text="Versand &amp; Labels"
             android:textAllCaps="false"
-            android:textSize="17sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/financeButton"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:layout_marginTop="10dp"
-            android:text="FINANZEN"
+            android:layout_marginTop="8dp"
+            android:text="Finanzen"
             android:textAllCaps="false"
-            android:textSize="17sp" />
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/integrationsButton"
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:layout_marginTop="10dp"
-            android:text="SCHNITTSTELLEN"
+            android:layout_marginTop="8dp"
+            android:text="Schnittstellen"
             android:textAllCaps="false"
-            android:textSize="17sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/statusText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:padding="16dp"
-            android:text="System bereit · ODP Office v0.1"
-            android:textColor="#B8C0C8"
-            android:textSize="14sp" />
+            android:layout_marginTop="20dp"
+            android:background="#121519"
+            android:padding="18dp"
+            android:text="System bereit · ODP Office v0.2"
+            android:textColor="#CBD1D8"
+            android:textSize="15sp" />
 
     </LinearLayout>
 </ScrollView>
